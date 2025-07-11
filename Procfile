@@ -1,5 +1,1 @@
-web:
-gunicorn
-ird_django.wsgi
---log-file
--
+web: gunicorn ird_django.wsgi --log-file -
