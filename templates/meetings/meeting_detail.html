@@ -1,0 +1,184 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ meeting.title }} - Meetings{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-{% if meeting.meeting_type == 'online' %}info{% elif meeting.meeting_type == 'in_person' %}success{% else %}warning{% endif %} mb-2">
+                                <i class="bi bi-{% if meeting.meeting_type == 'online' %}camera-video{% elif meeting.meeting_type == 'in_person' %}geo-alt{% else %}hybrid{% endif %} me-1"></i>
+                                {{ meeting.get_meeting_type_display }}
+                            </span>
+                            <h1 class="h2">{{ meeting.title }}</h1>
+                        </div>
+                        {% if meeting.price > 0 %}
+                            <span class="badge bg-secondary fs-6">${{ meeting.price }}</span>
+                        {% else %}
+                            <span class="badge bg-success fs-6">Free</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Meeting Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-event text-primary me-2"></i>
+                                <strong>{{ meeting.start_datetime|date:"l, F j, Y" }}</strong>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-clock text-primary me-2"></i>
+                                <span>{{ meeting.start_datetime|time:"g:i A" }} - {{ meeting.end_datetime|time:"g:i A" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if meeting.meeting_type == 'online' and meeting.online_link %}
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-camera-video text-primary me-2"></i>
+                                    {% if user_registered %}
+                                        <a href="{{ meeting.online_link }}" target="_blank" class="text-decoration-none">
+                                            Join Online Meeting
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Online meeting (register to access)</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if meeting.location %}
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                                    <span>{{ meeting.location }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Group Info -->
+                    {% if meeting.group %}
+                        <div class="alert alert-light">
+                            <i class="bi bi-people me-2"></i>
+                            This meeting is organized by <strong>{{ meeting.group.name }}</strong>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Description -->
+                    <h5>About This Meeting</h5>
+                    <div class="mb-4">
+                        {{ meeting.description|linebreaks }}
+                    </div>
+                    
+                    <!-- Organizer -->
+                    <div class="border-top pt-3">
+                        <h6 class="text-muted">Organized by</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person-fill text-white"></i>
+                            </div>
+                            <div>
+                                <strong>{{ meeting.created_by.get_full_name|default:meeting.created_by.username }}</strong>
+                                <br>
+                                <small class="text-muted">Meeting Organizer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Registration Card -->
+            <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                    {% if user.is_authenticated %}
+                        {% if user_registered %}
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                You're registered!
+                            </div>
+                            <form method="post" action="{% url 'meetings:cancel' meeting.slug %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger w-100" 
+                                        onclick="return confirm('Are you sure you want to cancel your registration?')">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel Registration
+                                </button>
+                            </form>
+                        {% elif can_register %}
+                            <div class="mb-3">
+                                <h5>Join This Meeting</h5>
+                                {% if meeting.price > 0 %}
+                                    <p class="text-muted">Registration fee: <strong>${{ meeting.price }}</strong></p>
+                                {% endif %}
+                            </div>
+                            <form method="post" action="{% url 'meetings:register' meeting.slug %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-circle me-1"></i>Register Now
+                                </button>
+                            </form>
+                        {% elif is_full %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                This meeting is full
+                            </div>
+                        {% else %}
+                            <div class="alert alert-secondary">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Registration is closed
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="mb-3">
+                            <h5>Join This Meeting</h5>
+                            <p class="text-muted">Please sign in to register</p>
+                        </div>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Sign In to Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Attendees -->
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-people me-2"></i>
+                        Attendees ({{ attendee_count }})
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if attendees %}
+                        {% for attendance in attendees %}
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
+                                    <i class="bi bi-person-fill text-white small"></i>
+                                </div>
+                                <small>{{ attendance.user.get_full_name|default:attendance.user.username }}</small>
+                            </div>
+                        {% endfor %}
+                        {% if attendee_count > 10 %}
+                            <small class="text-muted">and {{ attendee_count|add:"-10" }} more...</small>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted small mb-0">No attendees yet. Be the first to register!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Back Link -->
+    <div class="mt-4">
+        <a href="{% url 'meetings:list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Meetings
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Edit Profile - IRD{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-4">
+                <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="h3 mb-0">Edit Profile</h1>
+                    <p class="text-muted mb-0">Update your personal and professional information</p>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Personal Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person me-2"></i>Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Profile Picture -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 text-center">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" class="rounded-circle mb-2" width="120" height="120" style="object-fit: cover;">
+                                    <div class="d-flex flex-column gap-2">
+                                        <small class="text-muted">Current photo</small>
+                                        <form method="post" action="{% url 'accounts:delete_profile_picture' %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                    onclick="return confirm('Remove profile picture?')">
+                                                <i class="bi bi-trash me-1"></i>Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <div class="bg-secondary rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                        <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <small class="text-muted">No photo</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <label for="{{ user_form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                                {{ user_form.profile_picture }}
+                                {% if user_form.profile_picture.help_text %}
+                                    <div class="form-text">{{ user_form.profile_picture.help_text }}</div>
+                                {% endif %}
+                                {% if user_form.profile_picture.errors %}
+                                    <div class="text-danger small">{{ user_form.profile_picture.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Name Fields -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                {{ user_form.first_name }}
+                                {% if user_form.first_name.errors %}
+                                    <div class="text-danger small">{{ user_form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                {{ user_form.last_name }}
+                                {% if user_form.last_name.errors %}
+                                    <div class="text-danger small">{{ user_form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.email.id_for_label }}" class="form-label">Email Address</label>
+                                {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                    <div class="text-danger small">{{ user_form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                                {{ user_form.phone }}
+                                {% if user_form.phone.help_text %}
+                                    <div class="form-text">{{ user_form.phone.help_text }}</div>
+                                {% endif %}
+                                {% if user_form.phone.errors %}
+                                    <div class="text-danger small">{{ user_form.phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ user_form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                                {{ user_form.date_of_birth }}
+                                {% if user_form.date_of_birth.errors %}
+                                    <div class="text-danger small">{{ user_form.date_of_birth.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            <label for="{{ user_form.bio.id_for_label }}" class="form-label">Bio</label>
+                            {{ user_form.bio }}
+                            {% if user_form.bio.errors %}
+                                <div class="text-danger small">{{ user_form.bio.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-building me-2"></i>Professional Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Company and Position -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.company.id_for_label }}" class="form-label">Company</label>
+                                {{ profile_form.company }}
+                                {% if profile_form.company.errors %}
+                                    <div class="text-danger small">{{ profile_form.company.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.position.id_for_label }}" class="form-label">Position</label>
+                                {{ profile_form.position }}
+                                {% if profile_form.position.errors %}
+                                    <div class="text-danger small">{{ profile_form.position.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Links -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.linkedin_url.id_for_label }}" class="form-label">LinkedIn URL</label>
+                                {{ profile_form.linkedin_url }}
+                                {% if profile_form.linkedin_url.help_text %}
+                                    <div class="form-text">{{ profile_form.linkedin_url.help_text }}</div>
+                                {% endif %}
+                                {% if profile_form.linkedin_url.errors %}
+                                    <div class="text-danger small">{{ profile_form.linkedin_url.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.website.id_for_label }}" class="form-label">Website</label>
+                                {{ profile_form.website }}
+                                {% if profile_form.website.help_text %}
+                                    <div class="form-text">{{ profile_form.website.help_text }}</div>
+                                {% endif %}
+                                {% if profile_form.website.errors %}
+                                    <div class="text-danger small">{{ profile_form.website.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Skills and Interests -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.skills.id_for_label }}" class="form-label">Skills & Expertise</label>
+                                {{ profile_form.skills }}
+                                {% if profile_form.skills.help_text %}
+                                    <div class="form-text">{{ profile_form.skills.help_text }}</div>
+                                {% endif %}
+                                {% if profile_form.skills.errors %}
+                                    <div class="text-danger small">{{ profile_form.skills.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profile_form.interests.id_for_label }}" class="form-label">Professional Interests</label>
+                                {{ profile_form.interests }}
+                                {% if profile_form.interests.help_text %}
+                                    <div class="form-text">{{ profile_form.interests.help_text }}</div>
+                                {% endif %}
+                                {% if profile_form.interests.errors %}
+                                    <div class="text-danger small">{{ profile_form.interests.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Save Changes
+                    </button>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{% url 'accounts:change_password' %}" class="btn btn-outline-warning ms-auto">
+                        <i class="bi bi-shield-lock me-1"></i>Change Password
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

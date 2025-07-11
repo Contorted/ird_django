@@ -1,0 +1,255 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Institute of Roll Design - IRD{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">Institute of Roll Design</h1>
+                <p class="lead mb-4">Advancing excellence in roll technology, design innovation, and manufacturing processes for the global steel industry.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+                        </a>
+                        <a href="{% url 'meetings:list' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-calendar-event me-2"></i>View Meetings
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Join IRD
+                        </a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Member Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="bg-white bg-opacity-10 rounded-3 p-4 mt-4 mt-lg-0">
+                    <i class="bi bi-gear-wide-connected display-1 mb-3"></i>
+                    <h4>Professional Development</h4>
+                    <p class="mb-0">Leading the future of roll design through education, research, and collaboration.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <i class="bi bi-people-fill text-primary fs-1"></i>
+                    <h4 class="mt-2 mb-1">500+</h4>
+                    <small class="text-muted">Members</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <i class="bi bi-calendar-event text-success fs-1"></i>
+                    <h4 class="mt-2 mb-1">24</h4>
+                    <small class="text-muted">Events This Year</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <i class="bi bi-globe text-info fs-1"></i>
+                    <h4 class="mt-2 mb-1">15</h4>
+                    <small class="text-muted">Countries</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3">
+                    <i class="bi bi-award text-warning fs-1"></i>
+                    <h4 class="mt-2 mb-1">30+</h4>
+                    <small class="text-muted">Years Experience</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- What We Do -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-5 fw-bold">What We Do</h2>
+            <p class="lead text-muted">IRD connects roll design professionals worldwide through education, networking, and innovation.</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-mortarboard text-primary fs-1"></i>
+                    </div>
+                    <h4>Technical Education</h4>
+                    <p class="text-muted">Professional development courses, workshops, and certifications in roll design and manufacturing.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-people text-success fs-1"></i>
+                    </div>
+                    <h4>Industry Networking</h4>
+                    <p class="text-muted">Connect with leading professionals, researchers, and innovators in the roll design industry.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-lightbulb text-info fs-1"></i>
+                    </div>
+                    <h4>Research & Innovation</h4>
+                    <p class="text-muted">Stay ahead with cutting-edge research, new technologies, and industry best practices.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Events Preview -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h2 class="display-6 fw-bold mb-0">Upcoming Events</h2>
+            </div>
+            <div class="col-auto">
+                <a href="{% url 'meetings:list' %}" class="btn btn-outline-primary">
+                    View All Events <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        {% if upcoming_meetings %}
+            <div class="row g-4">
+                {% for meeting in upcoming_meetings %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-{% if meeting.meeting_type == 'online' %}info{% elif meeting.meeting_type == 'in_person' %}success{% else %}warning{% endif %}">
+                                    {{ meeting.get_meeting_type_display }}
+                                </span>
+                                {% if meeting.price > 0 %}
+                                    <small class="text-muted">${{ meeting.price }}</small>
+                                {% else %}
+                                    <small class="text-success fw-bold">Free</small>
+                                {% endif %}
+                            </div>
+                            <h5 class="card-title">{{ meeting.title }}</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar me-1"></i>
+                                {{ meeting.start_datetime|date:"M j, Y" }} at {{ meeting.start_datetime|time:"g:i A" }}
+                            </p>
+                            <p class="card-text">{{ meeting.description|truncatechars:80 }}</p>
+                            <a href="{% url 'meetings:detail' meeting.slug %}" class="btn btn-outline-primary btn-sm">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-calendar-event text-muted display-4"></i>
+                <h4 class="mt-3">No upcoming events yet</h4>
+                <p class="text-muted">Check back soon for new workshops and conferences.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Membership CTA -->
+{% if not user.is_authenticated %}
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-3">Join the Institute of Roll Design</h2>
+                <p class="lead mb-4">Connect with industry professionals, access exclusive resources, and advance your career in roll design.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Become a Member
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Member Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Features for Members -->
+{% if user.is_authenticated %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h2 class="display-6 fw-bold">Your IRD Dashboard</h2>
+            <p class="text-muted">Quick access to your member features</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check text-primary fs-1 mb-3"></i>
+                    <h5>My Meetings</h5>
+                    <p class="text-muted small">View your registered events</p>
+                    <a href="{% url 'meetings:my_meetings' %}" class="btn btn-outline-primary btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-person-circle text-success fs-1 mb-3"></i>
+                    <h5>Profile</h5>
+                    <p class="text-muted small">Update your information</p>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-success btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-people text-info fs-1 mb-3"></i>
+                    <h5>Groups</h5>
+                    <p class="text-muted small">Join professional groups</p>
+                    <a href="#" class="btn btn-outline-info btn-sm">Browse</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-gear text-warning fs-1 mb-3"></i>
+                    <h5>Admin</h5>
+                    <p class="text-muted small">Site administration</p>
+                    <a href="/admin/" class="btn btn-outline-warning btn-sm">Access</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
